@@ -4,6 +4,8 @@ import utils.debug._
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import cats.effect.implicits._
 import cats.implicits._
+
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 object Parallelism extends IOApp {
@@ -60,8 +62,14 @@ object Parallelism extends IOApp {
     } yield ()
   }
 
+
+  val ec = ExecutionContext.Implicits.global
+  val program = for {
+    _ <- IO.shift(ec)
+    _ <- IO(println(s"I am running on ${Thread.currentThread().getName}"))
+  } yield ()
   override def run(args: List[String]): IO[ExitCode] =
     //program.as(ExitCode.Success)
-  prog2
+  program3.as(ExitCode.Success)
 
 }
